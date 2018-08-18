@@ -3,54 +3,54 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-// Imprime funcionario
-void imprime(Agencia *func) {
+// Imprime agencia
+void imprime(Agencia *agencia) {
     printf("**********************************************");
     printf("\nAgencia de código ");
-    printf("%d", func->cod);
+    printf("%d", agencia->cod);
     printf("\nNome: ");
-    printf("%s", func->nome);
+    printf("%s", agencia->nome);
     printf("\nGerente: ");
-    printf("%s", func->gerente);
+    printf("%s", agencia->gerente);
     printf("\n**********************************************");
     printf("\n");
 }
 
-// Cria funcionario. Lembrar de usar free(func)
+// Cria agencia. Lembrar de usar free(agencia)
 Agencia *agencia(int cod, char *nome, char *gerente) {
-    Agencia *func = (Agencia*) malloc(sizeof(Agencia));
+    Agencia *agencia = (Agencia*) malloc(sizeof(Agencia));
     //inicializa espaço de memória com ZEROS
-    if (func) memset(func, 0, sizeof(Agencia));
-    //copia valores para os campos de func
-    func->cod = cod;
-    strcpy(func->nome, nome);
-    strcpy(func->gerente, gerente);
-    return func;
+    if (agencia) memset(agencia, 0, sizeof(Agencia));
+    //copia valores para os campos de agencia
+    agencia->cod = cod;
+    strcpy(agencia->nome, nome);
+    strcpy(agencia->gerente, gerente);
+    return agencia;
 }
 
-// Salva funcionario no arquivo out, na posicao atual do cursor
-void salva(Agencia *func, FILE *out) {
-    fwrite(&func->cod, sizeof(int), 1, out);
-    //func->nome ao invés de &func->nome, pois string já é ponteiro
-    fwrite(func->nome, sizeof(char), sizeof(func->nome), out);
-    fwrite(func->gerente, sizeof(char), sizeof(func->gerente), out);
+// Salva agencia no arquivo out, na posicao atual do cursor
+void salva(Agencia *agencia, FILE *out) {
+    fwrite(&agencia->cod, sizeof(int), 1, out);
+    //agencia->nome ao invés de &agencia->nome, pois string já é ponteiro
+    fwrite(agencia->nome, sizeof(char), sizeof(agencia->nome), out);
+    fwrite(agencia->gerente, sizeof(char), sizeof(agencia->gerente), out);
 }
 
 
-// Le um funcionario do arquivo in na posicao atual do cursor
-// Retorna um ponteiro para funcionario lido do arquivo
+// Le um agencia do arquivo in na posicao atual do cursor
+// Retorna um ponteiro para agencia lido do arquivo
 Agencia *le(FILE *in) {
-    Agencia *func = (Agencia *) malloc(sizeof(Agencia));
-    if (0 >= fread(&func->cod, sizeof(int), 1, in)) {
-    free(func);
+    Agencia *agencia = (Agencia *) malloc(sizeof(Agencia));
+    if (0 >= fread(&agencia->cod, sizeof(int), 1, in)) {
+    free(agencia);
     return NULL;
     }
-    fread(func->nome, sizeof(char), sizeof(func->nome), in);
-    fread(func->gerente, sizeof(char), sizeof(func->gerente), in);
-    return func;
+    fread(agencia->nome, sizeof(char), sizeof(agencia->nome), in);
+    fread(agencia->gerente, sizeof(char), sizeof(agencia->gerente), in);
+    return agencia;
 }
 
-// Retorna tamanho do funcionario em bytes
+// Retorna tamanho do agencia em bytes
 int tamanho() {
     return  sizeof(int)  //cod
             + sizeof(char) * 50 //nome
