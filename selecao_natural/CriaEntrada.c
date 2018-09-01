@@ -27,16 +27,6 @@ int main(int argc, char const *argv[])
         printf("%i ",i);
     }
     printf("\n");
-   
-
-	/*rewind(out);
-	int aux;
-	for (int i = 0; feof(out); i)
-	{
-		fread(&aux, sizeof(int), 1, out);
-		printf("%d\n",aux);
-	printf("aa\n");	
-	}*/
 
 	fclose(out);
 	return 0;

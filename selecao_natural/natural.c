@@ -3,8 +3,8 @@
 int contador = 0;
 
 int cmp (const void * a, const void * b) {
-   if ((int*)a == NULL)return 1;
-   if ((int*)b == NULL)return -1;
+   if (*(int*)a == NULL)return 1;
+   if (*(int*)b == NULL)return -1;
 
    return ( *(int*)a - *(int*)b );
 }
@@ -111,5 +111,7 @@ int main(int argc, char const *argv[])
 	ordena(input, vMemoria, aux);
 
 	fclose(input);
+
+	printf("Partições geradas com sucesso!\n");
 	return 0;
 }
