@@ -98,7 +98,7 @@ void main(int argc, char** argv) {
     le_arquivo_agencia(arquivo_agencia);
 
 
-
+    printf("print qualquer testando repositorio");
     //ler agencias
     //inserrir agencias
     //sair do programa
