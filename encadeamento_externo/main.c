@@ -303,10 +303,10 @@ void main(int argc, char** argv) {
     }
 
 
-    Cliente* cliente1 = cliente(1, "MATHEUS");
-    insere(cliente1);
+     Cliente* cliente1 = cliente(1, "MATHEUS");
+     insere(cliente1);
 
-    //buscar(7);
+    //buscar(1);
     //le_lista_do_hash(0);
 
     //remover(7);
