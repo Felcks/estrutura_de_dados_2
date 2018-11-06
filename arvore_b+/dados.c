@@ -25,6 +25,8 @@ void salva_dados(Dados *dados, FILE *out){
 	fwrite(&dados->no_pai, sizeof(int), 1, out);
 	fwrite(&dados->d, sizeof(int), 1, out);
 
+	printf("%i numero chaves\n", dados->numero_chaves );
+
 	for(int i = 0; i < dados->d*2; i++){
 
 		salva_cliente(&dados->registros[i], out);
@@ -53,9 +55,9 @@ Dados* le_dados(FILE* in){
 }
 
 int tamanho_dados(int d){
-	 return  sizeof(int)  //cod
-            + sizeof(int) //nome
-            + sizeof(int); //status
-            + tamanho_cliente() * d; 
+	 return  sizeof(int)  //num chaves
+            + sizeof(int) //no_pai
+            + sizeof(int) //d
+            + tamanho_cliente() * (2*d); 
 }
 

@@ -14,14 +14,14 @@ typedef struct arvore{
 	int endereco;
 } Arvore;
 
-Arvore* cria_arvore(void* elemento);
+Arvore* cria_arvore(void* elemento, int endereco);
 
 void printa_arvore(Arvore* arvore);
 
 Arvore* montar_arvore(Metadados* metadados, char* arquivo_indice_nome, char* arquivo_dados_nome, int d);
 
-Cliente* busca_arvore(Arvore* arvore, int cod, int eh_folha);
+Cliente* busca_arvore(Arvore* arvore, int cod, int eh_folha, char* arquivo_indice_nome, char* arquivo_dados_nome);
 
-void insere_arvore(Arvore* arvore, Cliente* cliente, int eh_folha, int d, char* arquivo_indice_nome, char* arquivo_dados_nome);
+int insere_arvore(Arvore* arvore, Cliente* cliente, int eh_folha, int d, char* arquivo_indice_nome, char* arquivo_dados_nome);
 
 #endif

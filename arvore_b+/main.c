@@ -20,7 +20,7 @@ void salvar_metadados(Dados* dados);
 void criar_raiz(){
 
 	Cliente* cliente = cria_cliente(1, "Matheus");
-	Dados* dados = cria_dados(1, 0, d, cliente);
+	Dados* dados = cria_dados(1, -1, d, cliente);
 
 	FILE *arquivo_dados;
 	if((arquivo_dados = fopen(arquivo_dados_nome, "wb")) == NULL){
@@ -29,16 +29,13 @@ void criar_raiz(){
 	else{
 
 		salva_dados(dados, arquivo_dados);
-		arvore = cria_arvore(dados);
+		arvore = cria_arvore(dados, 0);
 		salvar_metadados(dados);
 		fclose(arquivo_dados);
 
 		printf("Cliente criado com código 1 e nome Matheus\n");
 		printf("Arvore criada do zero!\n");
 	}
-
-
-	//Indice* indice = cria_indice(1, false, 0, d);
 }
 
 void salvar_metadados(Dados* dados){
@@ -72,7 +69,27 @@ void ler_metadados(){
 		arvore = montar_arvore(metadados, arquivo_indice_nome, arquivo_dados_nome, d);
 		printf("Arvore Montada!\n");
 	}
+}
 
+void inserir(Cliente* cliente){
+
+	printf("minha raiz é folha %i\n", eh_folha);
+	int raiz_eh_folha = insere_arvore(arvore, cliente, eh_folha, d, arquivo_indice_nome, arquivo_dados_nome);
+
+	//Quando a raiz deixa de ser folha - Preciso atualizar os metadados
+	if(raiz_eh_folha != eh_folha){
+
+		eh_folha = raiz_eh_folha;
+		FILE *arquivo_metadados;
+		if((arquivo_metadados = fopen(arquivo_metadados_nome, "wb+")) == NULL){
+			return;
+		}
+		else{
+			Metadados *metadados = cria_metadados(0, false);
+			salva_metadados(metadados, arquivo_metadados);
+			printf("Salvei novo metadados com raiz nao sendo folha\n");
+		}
+	}
 }
 
 
@@ -87,12 +104,22 @@ int main(int argc, char* argv[]){
 
 	ler_metadados();
 
-	busca_arvore(arvore, 1, eh_folha);
+	//busca_arvore(arvore, 10, eh_folha, arquivo_indice_nome, arquivo_dados_nome);
 
 
+	Cliente* cliente2 = cria_cliente(10, "Felipe");
+	Cliente* cliente3 = cria_cliente(11, "Felipe");
+	Cliente* cliente4 = cria_cliente(12, "Felipe");
+	Cliente* cliente5 = cria_cliente(13, "Felipe");
 
-	Cliente* cliente = cria_cliente(0, "Felipe");
-	insere_arvore(arvore, cliente, eh_folha, d, arquivo_indice_nome, arquivo_dados_nome);
+
+	Cliente* cliente10 = cria_cliente(7, "Felipe");
+	inserir(cliente10);
+
+	// inserir(cliente2);
+	// inserir(cliente3);
+	// inserir(cliente4);
+	// inserir(cliente5);
 
 	return 0;
 }
