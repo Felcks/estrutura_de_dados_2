@@ -3,6 +3,7 @@
 #include "cliente.h"
 
 char* arquivo_cliente = "cliente.dat";
+int x_mod = 3;
 
 void reseta_clientes(){
 
@@ -14,6 +15,7 @@ void reseta_clientes(){
     }
     else{
         printf("cliente.dat resetado com sucesso!\n");
+        fclose(out);
     }
 }
 
@@ -26,7 +28,7 @@ void insere(Cliente* cliente){
         exit(1);
     }
 
-    int pos_hash = cliente->cod % 7;
+    int pos_hash = cliente->cod % x_mod;
     int prox = pos_hash;
 
     //Casos de conflitos
@@ -55,7 +57,9 @@ void insere(Cliente* cliente){
                 eh_conflito = 1;
                 if(cliente_anterior->status == 1 && cliente_anterior->cod == cliente->cod){
                     printf("Cliente com mesmo código já existente na tabela.\n");
-                    exit(1);
+                    fclose(file_cliente);
+                    return;
+                    //exit(1);
                 }
             }
             else if(cliente_anterior->status == 0){
@@ -113,7 +117,6 @@ void insere(Cliente* cliente){
                 salva(cliente_anterior, file_cliente);
                 fflush(file_cliente);
                 fclose(file_cliente);
-
             }
         }
         
@@ -152,6 +155,9 @@ void le_lista_do_hash(int pos_hash){
             prox = c->prox;
             free(c);
         }
+        else{
+            break;
+        }
 
         if(prox == 0){
             break;
@@ -165,7 +171,7 @@ void le_lista_do_hash(int pos_hash){
 
 void buscar(int chave){
 
-    int pos_hash = chave % 7;
+    int pos_hash = chave % x_mod;
     int prox = pos_hash;
     int encontrado = 0;
 
@@ -209,7 +215,7 @@ void buscar(int chave){
 
 void remover(int chave){
 
-    int pos_hash = chave % 7;
+    int pos_hash = chave % x_mod;
     int prox = pos_hash;
     int encontrado = 0;
 
@@ -264,11 +270,11 @@ void main(int argc, char** argv) {
     }
 
 
-    Cliente* cliente1 = cliente(21, "MATHEUS");
-    //insere(cliente1);
+    Cliente* cliente1 = cliente(1, "MATHEUS");
+    insere(cliente1);
 
     //buscar(7);
-    le_lista_do_hash(0);
+    le_lista_do_hash(2);
 
     //remover(7);
 
