@@ -4,6 +4,7 @@
 
 char* arquivo_cliente = "cliente.dat";
 char* arquivo_hash = "compartimento_hash.dat";
+int x_mod = 3;
 
 void reseta_clientes(){
 
@@ -15,6 +16,7 @@ void reseta_clientes(){
     }
     else{
         printf("cliente.dat resetado com sucesso!\n");
+        fclose(out);
     }
 }
 
@@ -27,9 +29,10 @@ void reseta_compartimento(){
         exit(1);
     }
     else{
-        int vEntrada[7] = {-1, -1, -1, -1, -1, -1, -1};
-        for (int i = 0; i < 7; i++)
+        int vEntrada[x_mod];
+        for (int i = 0; i < x_mod; i++)
         {
+            vEntrada[i] = -1;
             fwrite(&vEntrada[i], sizeof(int), 1, out);
         }
         fflush(out);
@@ -63,7 +66,7 @@ void insere(Cliente* cliente){
     }
 
 
-    int pos_hash = cliente->cod % 7;
+    int pos_hash = cliente->cod % x_mod;
     int prox = 0;
 
     //Conferindo sem conflitos
@@ -92,8 +95,11 @@ void insere(Cliente* cliente){
         cliente_anterior = le(file_cliente);
 
         if(cliente_anterior->status == 1 && cliente_anterior->cod == cliente->cod){
-            printf("Cliente com mesmo código já existente na tabela.\n");
-            exit(1);
+            printf("Cliente com código %i já existente na tabela.\n", cliente->cod);
+            fclose(out);
+            fclose(file_cliente);
+            return;
+            //exit(1);
         }
 
         //Caso esteja alguém liberado no caminho -- FILE ta em a+ então isso nem rola pq né
@@ -156,6 +162,7 @@ void insere(Cliente* cliente){
         }
     }
     
+    printf("Cliente %i inserido com sucesso!\n", cliente->cod);
     fclose(out);
 }
 
@@ -198,7 +205,7 @@ void le_lista_do_hash(int pos_hash){
 
 void buscar(int chave){
 
-    int pos_hash = chave % 7;
+    int pos_hash = chave % x_mod;
     int encontrado = 0;
 
     FILE *out;
@@ -245,7 +252,7 @@ void buscar(int chave){
 
 void remover(int chave){
 
-    int pos_hash = chave % 7;
+    int pos_hash = chave % x_mod;
     int encontrado = 0;
 
     FILE *out;
@@ -303,13 +310,16 @@ void main(int argc, char** argv) {
     }
 
 
-     Cliente* cliente1 = cliente(1, "MATHEUS");
-     insere(cliente1);
+    Cliente* cliente1 = cliente(4, "MATHEUS");
+    insere(cliente1);
 
-    //buscar(1);
-    //le_lista_do_hash(0);
+    Cliente* cliente2 = cliente(1, "MATHEUS");
+    insere(cliente2);
 
-    //remover(7);
+    //buscar(3);
+    le_lista_do_hash(2);
+
+    //remover(0);
 
     //buscar(15);
     
