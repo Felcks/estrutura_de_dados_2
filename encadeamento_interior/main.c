@@ -3,7 +3,7 @@
 #include "cliente.h"
 
 char* arquivo_cliente = "cliente.dat";
-int x_mod = 3;
+int x_mod = 7;
 
 void reseta_clientes(){
 
@@ -212,7 +212,6 @@ void buscar(int chave){
     fclose(file_cliente);
 }
 
-
 void remover(int chave){
 
     int pos_hash = chave % x_mod;
@@ -262,6 +261,28 @@ void remover(int chave){
     fclose(file_cliente);
 }
 
+void ler_tabela_clientes(){
+
+    FILE *file_cliente;
+    if ((file_cliente = fopen(arquivo_cliente,"r"))==NULL)
+    {
+        printf("Nao foi possivel abir o arquivo de clientes\n");
+        return;
+    }
+
+    printf("Lendo tabela cliente.dat\n");
+    Cliente* c = NULL;
+    fseek(file_cliente, 0, SEEK_SET);
+
+    c = le(file_cliente);
+    while(c != NULL){
+        printf("Cliente %i\n", c->cod);
+        c = le(file_cliente);
+    }
+
+    fclose(file_cliente);
+}
+
 void main(int argc, char** argv) {
 
     //Qualquer parametro a mais zera as tabelas
@@ -270,11 +291,60 @@ void main(int argc, char** argv) {
     }
 
 
-    Cliente* cliente1 = cliente(1, "MATHEUS");
+    //INICIO DOS TESTES
+    Cliente* cliente1 = cliente(0, "MATHEUS");
     insere(cliente1);
 
+    // //INICIO DO PRIMEIRO TESTE
+    // cliente1 = cliente(7, "MATHEUS");
+    // insere(cliente1);
+
+    // cliente1 = cliente(14, "MATHEUS");
+    // insere(cliente1);
+
+    // cliente1 = cliente(21, "MATHEUS");
+    // insere(cliente1);
+
+    // cliente1 = cliente(28, "MATHEUS");
+    // insere(cliente1);
+
+    // //INICIO DO SEGUNDO TESTE
+    // cliente1 = cliente(1, "MATHEUS");
+    // insere(cliente1);
+
+    // //INICIO DO TERCEIRO TESTE
+    // cliente1 = cliente(8, "MATHEUS");
+    // insere(cliente1);
+
+    // cliente1 = cliente(15, "MATHEUS");
+    // insere(cliente1);
+
+    // cliente1 = cliente(22, "MATHEUS");
+    // insere(cliente1);
+
+    // //INICIO DO QUINTO TESTE
+    // cliente1 = cliente(5, "MATHEUS");
+    // insere(cliente1);
+
+    // cliente1 = cliente(6, "MATHEUS");
+    // insere(cliente1);
+
+    // //INICIO DO QUINTO TESTE
+    // cliente1 = cliente(35, "MATHEUS");
+    // insere(cliente1);
+
+    // cliente1 = cliente(36, "MATHEUS");
+    // insere(cliente1);
+
+    // cliente1 = cliente(37, "MATHEUS");
+    // insere(cliente1);
+
+    
+    ler_tabela_clientes();
+
+
     //buscar(7);
-    le_lista_do_hash(2);
+    //le_lista_do_hash(6);
 
     //remover(7);
 
