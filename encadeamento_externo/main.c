@@ -4,7 +4,7 @@
 
 char* arquivo_cliente = "cliente.dat";
 char* arquivo_hash = "compartimento_hash.dat";
-int x_mod = 3;
+int x_mod = 7;
 
 void reseta_clientes(){
 
@@ -301,6 +301,48 @@ void remover(int chave){
     fclose(out);
 }
 
+void ler_tabela_clientes(){
+
+    FILE *file_cliente;
+    if ((file_cliente = fopen(arquivo_cliente,"r"))==NULL)
+    {
+        printf("Nao foi possivel abir o arquivo de clientes\n");
+        return;
+    }
+
+    printf("Lendo tabela cliente.dat\n");
+    Cliente* c = NULL;
+    fseek(file_cliente, 0, SEEK_SET);
+
+    c = le(file_cliente);
+    while(c != NULL){
+        printf("Cliente %i\n", c->cod);
+        c = le(file_cliente);
+    }
+
+    fclose(file_cliente);
+}
+
+void ler_tabela_compartimento(){
+
+    FILE *file_compartimento;
+    if((file_compartimento = fopen(arquivo_hash, "r")) == NULL)
+    {
+        printf("Nao foi possivel abrir o arquivo de compartimento\n");
+        return;
+    }
+
+    printf("Lendo tabela compartimento.h\n");
+    int ponteiro = -1;
+    fseek(file_compartimento, 0, SEEK_SET);
+
+
+    for(int i = 0; i < x_mod; i++){
+        fread(&ponteiro, sizeof(int), 1, file_compartimento);
+        printf("Compartimento %i endereço %i\n", i, ponteiro);
+    }
+}
+
 void main(int argc, char** argv) {
 
     //Qualquer parametro a mais zera as tabelas
@@ -309,16 +351,62 @@ void main(int argc, char** argv) {
         reseta_clientes();
     }
 
-
-    Cliente* cliente1 = cliente(4, "MATHEUS");
+    //INICIO DOS TESTES
+    Cliente* cliente1 = cliente(0, "MATHEUS");
     insere(cliente1);
 
-    Cliente* cliente2 = cliente(1, "MATHEUS");
-    insere(cliente2);
+    // //INICIO DO PRIMEIRO TESTE
+    // cliente1 = cliente(7, "MATHEUS");
+    // insere(cliente1);
+
+    // cliente1 = cliente(14, "MATHEUS");
+    // insere(cliente1);
+
+    // cliente1 = cliente(21, "MATHEUS");
+    // insere(cliente1);
+
+    // cliente1 = cliente(28, "MATHEUS");
+    // insere(cliente1);
+
+    // //INICIO DO SEGUNDO TESTE
+    // cliente1 = cliente(1, "MATHEUS");
+    // insere(cliente1);
+
+    // //INICIO DO TERCEIRO TESTE
+    // cliente1 = cliente(8, "MATHEUS");
+    // insere(cliente1);
+
+    // cliente1 = cliente(15, "MATHEUS");
+    // insere(cliente1);
+
+    // cliente1 = cliente(22, "MATHEUS");
+    // insere(cliente1);
+
+    // //INICIO DO QUINTO TESTE
+    // cliente1 = cliente(5, "MATHEUS");
+    // insere(cliente1);
+
+    // cliente1 = cliente(6, "MATHEUS");
+    // insere(cliente1);
+
+    // //INICIO DO QUINTO TESTE
+    // cliente1 = cliente(35, "MATHEUS");
+    // insere(cliente1);
+
+    // cliente1 = cliente(36, "MATHEUS");
+    // insere(cliente1);
+
+    // cliente1 = cliente(37, "MATHEUS");
+    // insere(cliente1);
+
+
+    ler_tabela_clientes();
+    ler_tabela_compartimento();
+
 
     //buscar(3);
-    le_lista_do_hash(2);
-
+    //le_lista_do_hash(0);
+    
     //remover(0);
 
     //buscar(15);
