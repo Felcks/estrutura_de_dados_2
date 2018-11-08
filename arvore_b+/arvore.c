@@ -35,7 +35,7 @@ Arvore* montar_arvore(Metadados* metadados, char* arquivo_indice_nome, char* arq
 		}
 		else{
 
-			fseek(arquivo_indice, 0, SEEK_SET);
+			fseek(arquivo_indice, (tamanho_indice(d) * metadados->raiz), SEEK_SET);
 			Indice *indice = le_indice(arquivo_indice);
 			arvore = cria_arvore(indice, metadados->raiz);
 		}
@@ -65,7 +65,7 @@ Arvore* montar_arvore_com_endereco(int endereco, int eh_folha, char* arquivo_ind
 		}
 		else{
 
-			fseek(arquivo_indice, 0, SEEK_SET);
+			fseek(arquivo_indice, tamanho_indice(d) * endereco, SEEK_SET);
 			Indice *indice = le_indice(arquivo_indice);
 			arvore = cria_arvore(indice, endereco);
 		}
@@ -113,7 +113,7 @@ Cliente* busca_arvore(Arvore* arvore, int cod, int eh_folha, char* arquivo_indic
 	}
 }
 
-void insere_indice(int endereco_indice, int chave, int endereco_nova_pagina, int d, FILE* arquivo_indice){
+void insere_indice(int endereco_indice, int chave, int endereco_nova_pagina, int d, FILE* arquivo_indice, FILE* arquivo_dados){
 
 	printf("INSERE INDICE endereco nova pagina %i\n", endereco_nova_pagina);
 	fseek(arquivo_indice, tamanho_indice(d) * endereco_indice, SEEK_SET);
@@ -142,10 +142,134 @@ void insere_indice(int endereco_indice, int chave, int endereco_nova_pagina, int
 			}
 		}
 
+		fseek(arquivo_indice, tamanho_indice(d) * endereco_indice, SEEK_SET);
+		salva_indice(indice, arquivo_indice);
 		//Tenho que salvar indice
 	}
 	else{
-		//Vamos ter que inserir no indice partindo-o em 2
+
+		int chaves_array[d*2 + 1];
+		for(int i = 0; i < 2*d; i++){
+			chaves_array[i] = indice->chaves[i];
+		}
+		chaves_array[2*d] = chave;
+
+		int ponteiros_array[d*2 + 1];
+		for(int i = 0; i < 2*d; i++){
+			ponteiros_array[i] = indice->ponteiros_paginas[i+1];
+		}
+		ponteiros_array[2*d] = endereco_nova_pagina;
+
+		for(int i = 0; i < 2*d; i++){
+			for(int j = (i+1); j < (2*d) + 1; j++){
+
+				int chaveAux, endAux;
+				if(chaves_array[i] > chaves_array[j]){
+					chaveAux = chaves_array[i];
+					endAux = ponteiros_array[i];
+					
+					chaves_array[i] = chaves_array[j];
+					ponteiros_array[i] = ponteiros_array[j];
+					
+					chaves_array[j] = chaveAux;
+					ponteiros_array[j] = endAux;
+				}
+			}
+		}
+
+		//Indice atual
+		indice->numero_chaves = d;
+		for(int i = 0; i < d; i++){
+			indice->chaves[i] = chaves_array[i];
+		}
+
+		for(int i = 1; i < d+1; i++){
+			indice->ponteiros_paginas[i] = ponteiros_array[i-1];
+		}
+
+		//Indice Criado
+		Indice* indiceNovo = cria_indice(d+1, indice->aponta_para_folha, indice->no_pai, d);
+		for(int i = 0; i < d+1; i++){
+			indiceNovo->chaves[i] = chaves_array[d + i];
+		}
+
+		for(int i = 0; i < d+2; i++){
+			indiceNovo->ponteiros_paginas[i] = ponteiros_array[(d-1) + i];
+		}
+
+		//Endereço novo indice
+		fseek(arquivo_indice, 0, SEEK_END);
+		int endereco_novo_indice = (ftell(arquivo_indice) / tamanho_indice(d)) + 1;
+
+		//Apontar os dados para o nó indice
+		if(indiceNovo->aponta_para_folha){
+			for(int i = 0; i < indiceNovo->numero_chaves+1; i++){
+				fseek(arquivo_dados, indiceNovo->ponteiros_paginas[i] * tamanho_dados(d), SEEK_SET);
+				Dados* dados = le_dados(arquivo_dados);
+				dados->no_pai = endereco_novo_indice;
+
+
+				fseek(arquivo_dados, indiceNovo->ponteiros_paginas[i] * tamanho_dados(d), SEEK_SET);
+				salva_dados(dados, arquivo_dados);
+			}
+		}
+		else{
+			for(int i = 0; i < indiceNovo->numero_chaves+1; i++){
+				fseek(arquivo_indice, indiceNovo->ponteiros_paginas[i] * tamanho_dados(d), SEEK_SET);
+				Indice* indice = le_indice(arquivo_indice);
+				indice->no_pai = endereco_novo_indice;
+
+				fseek(arquivo_indice, indiceNovo->ponteiros_paginas[i] * tamanho_dados(d), SEEK_SET);
+				salva_indice(indice, arquivo_indice);
+			}
+		}
+
+		if(indice->no_pai == -1){
+
+			Indice* indice_pai = cria_indice(1, false, -1, d);
+			indice_pai->chaves[0] = indiceNovo->chaves[0];
+			indice_pai->ponteiros_paginas[0] = endereco_indice;
+			indice_pai->ponteiros_paginas[1] = endereco_novo_indice;
+
+			fseek(arquivo_indice, 0, SEEK_END); //Vai salvar no ultimo
+			salva_indice(indice_pai, arquivo_indice);
+
+			int endereco_pai = (ftell(arquivo_indice) / tamanho_indice(d)) - 1 ;
+			indice->no_pai = endereco_pai;
+			indiceNovo->no_pai = endereco_pai;
+
+			fseek(arquivo_indice, endereco_indice * tamanho_indice(d), SEEK_SET);
+			salva_indice(indice, arquivo_indice);
+
+			fseek(arquivo_indice, 0, SEEK_END);
+			salva_indice(indiceNovo, arquivo_indice);
+
+
+			FILE* arquivo_metadados;
+			if((arquivo_metadados = fopen("arquivo_metadados.dat", "wb+")) == NULL ){
+
+				printf("Erro ao tentar abrir arquivo de i\n");
+				exit(0);
+			}
+			else{
+
+				Metadados* metadados = cria_metadados(endereco_pai, false);
+				salva_metadados(metadados, arquivo_metadados);
+			}
+
+			fclose(arquivo_metadados);
+			return;
+		}
+		else{
+
+			fseek(arquivo_indice, endereco_indice * tamanho_indice(d), SEEK_SET);
+			salva_indice(indice, arquivo_indice);
+
+			fseek(arquivo_indice, 0, SEEK_END);
+			salva_indice(indiceNovo, arquivo_indice);
+
+			insere_indice(indice->no_pai, indiceNovo->chaves[0], endereco_novo_indice - 1, d, arquivo_indice, arquivo_dados);
+		}
 	}
 
 }
@@ -207,7 +331,6 @@ int insere(Arvore* arvore, Cliente* cliente, int eh_folha, int d, FILE *arquivo_
 			// 	printf("%i ", novosDados->registros[i].cod);
 			// }
 
-			printf("dados no pai %i\n",dados->no_pai);
 			//Se ele não têm pai - ESTOU NA RAIZ
 			if(dados->no_pai == -1){
 
@@ -218,7 +341,6 @@ int insere(Arvore* arvore, Cliente* cliente, int eh_folha, int d, FILE *arquivo_
 				fseek(arquivo_dados, 0 , SEEK_SET);
 				salva_dados(dados, arquivo_dados);
 
-				printf("novos dados:\n");
 				fseek(arquivo_dados, tamanho_dados(d) * 1, SEEK_SET);
 				salva_dados(novosDados, arquivo_dados); 
 
@@ -229,6 +351,9 @@ int insere(Arvore* arvore, Cliente* cliente, int eh_folha, int d, FILE *arquivo_
 
 				fseek(arquivo_indice, 0, SEEK_SET);
 				salva_indice(indice, arquivo_indice);
+
+				fclose(arquivo_indice);
+				fclose(arquivo_dados);
 
 				return 0;
 				//indice->ponteiros_pagina
@@ -246,7 +371,10 @@ int insere(Arvore* arvore, Cliente* cliente, int eh_folha, int d, FILE *arquivo_
 				fseek(arquivo_dados, tamanho_dados(d) * endereco_nova_pagina, SEEK_SET);
 				salva_dados(novosDados, arquivo_dados);
 
-				insere_indice(novosDados->no_pai, novosDados->registros[0].cod, endereco_nova_pagina, d, arquivo_indice);
+				insere_indice(novosDados->no_pai, novosDados->registros[0].cod, endereco_nova_pagina, d, arquivo_indice, arquivo_dados);
+
+				fclose(arquivo_indice);
+				fclose(arquivo_dados);
 				return 0;
 				//fseek(arquivo_dados, dad)
 			}

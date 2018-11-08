@@ -28,13 +28,13 @@ void salva_indice(Indice* indice, FILE* out){
 	for(int i = 0; i < (indice->d*2) + 1; i++){
 
 		fwrite(&indice->ponteiros_paginas[i], sizeof(int), 1, out);
-		printf("salvando ponteiros_paginas %i\n", indice->ponteiros_paginas[i]);
+		//printf("salvando ponteiros_paginas %i\n", indice->ponteiros_paginas[i]);
 	}
 
 	for(int i = 0; i < (indice->d*2); i++){
 
 		fwrite(&indice->chaves[i], sizeof(int), 1, out);
-		printf("salvando chaves %i\n", indice->chaves[i]);
+		//printf("salvando chaves %i\n", indice->chaves[i]);
 	}
 }
 
@@ -74,5 +74,28 @@ int tamanho_indice(int d){
             + sizeof(int) //no pai
             + sizeof(int) //d
             + sizeof(int) * ((d*2) + 1) //ponteiro paginas
-            + sizeof(int) + (d*2); //Chaves
+            + sizeof(int) * (d*2); //Chaves
+}
+
+
+void imprime_indice(Indice *indice, int endereco){
+	printf("**********************************************");
+    printf("\nIndice endereco: ");
+    printf("%d", endereco);
+    printf("\nIndice aponta para folha: ");
+    printf("%i", indice->aponta_para_folha);
+    printf("\nIndice no pai: ");
+    printf("%i", indice->no_pai);
+    printf("\nIndice chaves: ");
+    for(int j = 0; j < indice->numero_chaves; j++){
+		printf("%i ", indice->chaves[j]);
+	}
+
+	printf("\nIndice ponteiros: ");
+	printf("%i ", indice->ponteiros_paginas[0]);
+	for(int j = 0; j < indice->numero_chaves; j++){
+		printf("%i ", indice->ponteiros_paginas[j+1]);
+	}
+    printf("\n**********************************************");
+    printf("\n");
 }

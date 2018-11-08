@@ -22,4 +22,6 @@ Indice* le_indice(FILE* in);
 
 int tamanho_indice(int d);
 
+void imprime_indice(Indice *indice, int endereco);
+
 #endif

@@ -22,5 +22,6 @@ Dados* le_dados(FILE* in);
 
 int tamanho_dados(int d);
 
+void imprime_dados(Dados* dados, int endereco);
 
 #endif

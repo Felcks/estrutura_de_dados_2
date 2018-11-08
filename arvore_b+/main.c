@@ -64,6 +64,7 @@ void ler_metadados(){
 
 		Metadados* metadados = le_metadados(arquivo_metadados);
 		eh_folha = metadados->eh_folha;
+		printf("na leitura do metadados raiz %i\n", metadados->raiz);
 		fclose(arquivo_metadados);
 
 		arvore = montar_arvore(metadados, arquivo_indice_nome, arquivo_dados_nome, d);
@@ -73,7 +74,6 @@ void ler_metadados(){
 
 void inserir(Cliente* cliente){
 
-	printf("minha raiz é folha %i\n", eh_folha);
 	int raiz_eh_folha = insere_arvore(arvore, cliente, eh_folha, d, arquivo_indice_nome, arquivo_dados_nome);
 
 	//Quando a raiz deixa de ser folha - Preciso atualizar os metadados
@@ -87,9 +87,46 @@ void inserir(Cliente* cliente){
 		else{
 			Metadados *metadados = cria_metadados(0, false);
 			salva_metadados(metadados, arquivo_metadados);
-			printf("Salvei novo metadados com raiz nao sendo folha\n");
 		}
 	}
+}
+
+void ler_arquivos_dados(){
+
+	FILE* arquivo_dados;
+	if((arquivo_dados = fopen(arquivo_dados_nome, "rb+")) == NULL){
+		printf("Erro ao tentar abrir arquivo de indice ou de dados na hora de inserir\n");
+		exit(0);
+	}
+
+	Dados* dados = le_dados(arquivo_dados);
+	int i = 0;
+	while(dados != NULL){
+		imprime_dados(dados, i);
+		i++;
+		dados = le_dados(arquivo_dados);
+	}
+
+	fclose(arquivo_dados);
+}
+
+void ler_arquivo_indices(){
+
+	FILE* arquivo_indice;
+	if((arquivo_indice = fopen(arquivo_indice_nome, "rb+")) == NULL){
+		printf("Erro ao tentar abrir arquivo de indice ou de dados na hora de inserir\n");
+		exit(0);
+	}
+
+	Indice* indice = le_indice(arquivo_indice);
+	int i = 0;
+	while(indice != NULL){
+		imprime_indice(indice, i);
+		i++;
+		indice = le_indice(arquivo_indice);
+	}
+
+	fclose(arquivo_indice);
 }
 
 
@@ -104,17 +141,29 @@ int main(int argc, char* argv[]){
 
 	ler_metadados();
 
-	//busca_arvore(arvore, 10, eh_folha, arquivo_indice_nome, arquivo_dados_nome);
+	busca_arvore(arvore, 18	, eh_folha, arquivo_indice_nome, arquivo_dados_nome);
+
+	Cliente* cliente2 = cria_cliente(1, "Felipe");
+	Cliente* cliente3 = cria_cliente(2, "Felipe");
+	Cliente* cliente4 = cria_cliente(3, "Felipe");
+	Cliente* cliente5 = cria_cliente(4, "Felipe");
 
 
-	Cliente* cliente2 = cria_cliente(10, "Felipe");
-	Cliente* cliente3 = cria_cliente(11, "Felipe");
-	Cliente* cliente4 = cria_cliente(12, "Felipe");
-	Cliente* cliente5 = cria_cliente(13, "Felipe");
+	Cliente* cliente10 = cria_cliente(18, "Felipe");
+	//inserir(cliente10);
 
+	ler_arquivo_indices();
+	ler_arquivos_dados();
 
-	Cliente* cliente10 = cria_cliente(7, "Felipe");
-	inserir(cliente10);
+	// inserir(cliente2);
+	// inserir(cliente3);
+	// inserir(cliente4);
+	// inserir(cliente5);
+
+	cliente2 = cria_cliente(6, "Felipe");
+	cliente3 = cria_cliente(7, "Felipe");
+	cliente4 = cria_cliente(8, "Felipe");
+	cliente5 = cria_cliente(9, "Felipe");
 
 	// inserir(cliente2);
 	// inserir(cliente3);

@@ -25,12 +25,12 @@ void salva_dados(Dados *dados, FILE *out){
 	fwrite(&dados->no_pai, sizeof(int), 1, out);
 	fwrite(&dados->d, sizeof(int), 1, out);
 
-	printf("%i numero chaves\n", dados->numero_chaves );
+	//printf("%i numero chaves\n", dados->numero_chaves );
 
 	for(int i = 0; i < dados->d*2; i++){
 
 		salva_cliente(&dados->registros[i], out);
-		printf("salvando dados %i\n", dados->registros[i].cod);
+		//printf("salvando dados %i\n", dados->registros[i].cod);
 	}
 }
 
@@ -59,5 +59,20 @@ int tamanho_dados(int d){
             + sizeof(int) //no_pai
             + sizeof(int) //d
             + tamanho_cliente() * (2*d); 
+}
+
+
+void imprime_dados(Dados* dados, int endereco){
+	printf("***********************");
+    printf("\nDados endereco: ");
+    printf("%d", endereco);
+    printf("\nDados no_pai: ");
+    printf("%i", dados->no_pai);
+    printf("\nDados dados: ");
+    for(int j = 0; j < dados->numero_chaves; j++){
+		printf("%i ", dados->registros[j].cod);
+	}
+    printf("\n***********************");
+    printf("\n");
 }
 
