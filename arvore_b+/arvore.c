@@ -83,7 +83,7 @@ Cliente* busca_arvore(Arvore* arvore, int cod, int eh_folha, char* arquivo_indic
 	if(eh_folha){
 		Dados* dados = (Dados*)arvore->ponteiro;
 		for(int i = 0; i < dados->numero_chaves; i++){
-			printf("rodando arvore %i\n", dados->registros[i].cod );
+			//printf("rodando arvore %i\n", dados->registros[i].cod );
 			if(dados->registros[i].cod == cod){
 				printf("Achou o registro %i! \n", cod);
 				return &dados->registros[i];
@@ -115,7 +115,7 @@ Cliente* busca_arvore(Arvore* arvore, int cod, int eh_folha, char* arquivo_indic
 
 void insere_indice(int endereco_indice, int chave, int endereco_nova_pagina, int d, FILE* arquivo_indice, FILE* arquivo_dados){
 
-	printf("INSERE INDICE endereco nova pagina %i\n", endereco_nova_pagina);
+	//printf("INSERE INDICE endereco nova pagina %i\n", endereco_nova_pagina);
 	fseek(arquivo_indice, tamanho_indice(d) * endereco_indice, SEEK_SET);
 	Indice* indice = le_indice(arquivo_indice);
 
@@ -278,6 +278,7 @@ void insere_indice(int endereco_indice, int chave, int endereco_nova_pagina, int
 int insere(Arvore* arvore, Cliente* cliente, int eh_folha, int d, FILE *arquivo_indice, FILE *arquivo_dados,
 	char* arquivo_indice_nome, char* arquivo_dados_nome){
 
+
 	if(eh_folha){
 
 		if((arquivo_dados = fopen(arquivo_dados_nome, "rb+")) == NULL || (arquivo_indice = fopen(arquivo_indice_nome, "rb+")) == NULL){
@@ -333,7 +334,6 @@ int insere(Arvore* arvore, Cliente* cliente, int eh_folha, int d, FILE *arquivo_
 
 			//Se ele não têm pai - ESTOU NA RAIZ
 			if(dados->no_pai == -1){
-
 				//Sei disso pois vamos criar um novo indice como raiz
 				dados->no_pai = 0;
 				novosDados->no_pai = 0;
@@ -355,6 +355,8 @@ int insere(Arvore* arvore, Cliente* cliente, int eh_folha, int d, FILE *arquivo_
 				fclose(arquivo_indice);
 				fclose(arquivo_dados);
 
+
+				printf("Insercao feita com sucesso cod %i!\n", cliente->cod);
 				return 0;
 				//indice->ponteiros_pagina
 			}
@@ -375,6 +377,9 @@ int insere(Arvore* arvore, Cliente* cliente, int eh_folha, int d, FILE *arquivo_
 
 				fclose(arquivo_indice);
 				fclose(arquivo_dados);
+
+
+				printf("Insercao feita com sucesso cod %i!\n", cliente->cod);
 				return 0;
 				//fseek(arquivo_dados, dad)
 			}
@@ -407,26 +412,28 @@ int insere(Arvore* arvore, Cliente* cliente, int eh_folha, int d, FILE *arquivo_
 		fclose(arquivo_indice);
 	}
 	else{
-
 		Indice* indice = (Indice*)arvore->ponteiro;
-
+		
 		for(int i = 0; i < indice->numero_chaves; i++){
 
-			
 			if(cliente->cod < indice->chaves[i]){
 				
 				Arvore* arvore_nova = montar_arvore_com_endereco(indice->ponteiros_paginas[i], indice->aponta_para_folha,
 																		arquivo_indice_nome, arquivo_dados_nome, indice->d);
 
+				//fclose(arquivo_dados);
+				//fclose(arquivo_indice);
 				insere(arvore_nova, cliente, indice->aponta_para_folha, d, arquivo_indice, arquivo_dados, arquivo_indice_nome, arquivo_dados_nome);
 				return 0;
 			}
 		}
 
-
 		int i = indice->numero_chaves;
 		Arvore* arvore_nova = montar_arvore_com_endereco(indice->ponteiros_paginas[i], indice->aponta_para_folha,
 																	arquivo_indice_nome, arquivo_dados_nome, indice->d);
+
+		//fclose(arquivo_dados);
+		//fclose(arquivo_indice);
 		insere(arvore_nova, cliente, indice->aponta_para_folha, d, arquivo_indice, arquivo_dados, arquivo_indice_nome, arquivo_dados_nome);
 		return 0;
 

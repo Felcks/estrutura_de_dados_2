@@ -33,8 +33,8 @@ void criar_raiz(){
 		salvar_metadados(dados);
 		fclose(arquivo_dados);
 
-		printf("Cliente criado com código 1 e nome Matheus\n");
-		printf("Arvore criada do zero!\n");
+		//printf("Cliente criado com código 1 e nome Matheus\n");
+		//printf("Arvore criada do zero!\n");
 	}
 }
 
@@ -64,15 +64,21 @@ void ler_metadados(){
 
 		Metadados* metadados = le_metadados(arquivo_metadados);
 		eh_folha = metadados->eh_folha;
-		printf("na leitura do metadados raiz %i\n", metadados->raiz);
 		fclose(arquivo_metadados);
 
 		arvore = montar_arvore(metadados, arquivo_indice_nome, arquivo_dados_nome, d);
-		printf("Arvore Montada!\n");
+		//printf("Arvore Montada!\n");
 	}
 }
 
 void inserir(Cliente* cliente){
+
+
+	Cliente* result = busca_arvore(arvore, cliente->cod, eh_folha, arquivo_indice_nome, arquivo_dados_nome);
+	if(result != NULL){
+		printf("Código repetido!\n");
+		return;
+	}
 
 	int raiz_eh_folha = insere_arvore(arvore, cliente, eh_folha, d, arquivo_indice_nome, arquivo_dados_nome);
 
@@ -87,8 +93,11 @@ void inserir(Cliente* cliente){
 		else{
 			Metadados *metadados = cria_metadados(0, false);
 			salva_metadados(metadados, arquivo_metadados);
+			fclose(arquivo_metadados);
 		}
 	}
+
+	ler_metadados();
 }
 
 void ler_arquivos_dados(){
@@ -141,34 +150,63 @@ int main(int argc, char* argv[]){
 
 	ler_metadados();
 
-	busca_arvore(arvore, 18	, eh_folha, arquivo_indice_nome, arquivo_dados_nome);
+	busca_arvore(arvore, -1	, eh_folha, arquivo_indice_nome, arquivo_dados_nome);
 
-	Cliente* cliente2 = cria_cliente(1, "Felipe");
-	Cliente* cliente3 = cria_cliente(2, "Felipe");
-	Cliente* cliente4 = cria_cliente(3, "Felipe");
-	Cliente* cliente5 = cria_cliente(4, "Felipe");
+	Cliente* cliente2 = cria_cliente(2, "Felipe");
+	Cliente* cliente3 = cria_cliente(3, "Felipe");
+	Cliente* cliente4 = cria_cliente(4, "Felipe");
+	Cliente* cliente5 = cria_cliente(5, "Felipe");
 
 
 	Cliente* cliente10 = cria_cliente(18, "Felipe");
-	//inserir(cliente10);
+	inserir(cliente10);
 
-	ler_arquivo_indices();
-	ler_arquivos_dados();
+	//ler_arquivo_indices();
+	//ler_arquivos_dados();
 
-	// inserir(cliente2);
-	// inserir(cliente3);
-	// inserir(cliente4);
-	// inserir(cliente5);
+	inserir(cliente2);
+	inserir(cliente3);
+	inserir(cliente4);	
+	inserir(cliente5);
+
+
+	// ler_arquivo_indices();
+	// ler_arquivos_dados();
+
+	
 
 	cliente2 = cria_cliente(6, "Felipe");
 	cliente3 = cria_cliente(7, "Felipe");
 	cliente4 = cria_cliente(8, "Felipe");
 	cliente5 = cria_cliente(9, "Felipe");
 
-	// inserir(cliente2);
-	// inserir(cliente3);
-	// inserir(cliente4);
-	// inserir(cliente5);
+	inserir(cliente2);
+	inserir(cliente3);
+	inserir(cliente4);
+	inserir(cliente5);
 
+	cliente2 = cria_cliente(10, "Felipe");
+	cliente3 = cria_cliente(11, "Felipe");
+	cliente4 = cria_cliente(12, "Felipe");
+	cliente5 = cria_cliente(13, "Felipe");
+
+	inserir(cliente2);
+	inserir(cliente3);
+	inserir(cliente4);
+	inserir(cliente5);
+
+	cliente2 = cria_cliente(-10, "Felipe");
+	cliente3 = cria_cliente(-20, "Felipe");
+	cliente4 = cria_cliente(-30, "Felipe");
+	cliente5 = cria_cliente(-40, "Felipe");
+
+	inserir(cliente2);
+	inserir(cliente3);
+	inserir(cliente4);
+	inserir(cliente5);
+
+
+	ler_arquivo_indices();
+	ler_arquivos_dados();
 	return 0;
 }
