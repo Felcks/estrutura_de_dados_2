@@ -86,6 +86,11 @@ void insere(Cliente* cliente){
 
     // Se não achou vazio insere no final, atualiza o ponteiro do ultimo da lista;
     if(achou_vazio == 0){
+
+        if(prox >= 6){
+            printf("Tabela cheia não foi possível inserir %i\n", cliente->cod);
+            return;
+        }
         
         if(eh_conflito == 0){
 
@@ -296,31 +301,35 @@ void main(int argc, char** argv) {
     insere(cliente1);
 
     // //INICIO DO PRIMEIRO TESTE
-    // cliente1 = cliente(7, "MATHEUS");
-    // insere(cliente1);
+    cliente1 = cliente(7, "MATHEUS");
+    insere(cliente1);
 
-    // cliente1 = cliente(14, "MATHEUS");
-    // insere(cliente1);
+    cliente1 = cliente(14, "MATHEUS");
+    insere(cliente1);
 
-    // cliente1 = cliente(21, "MATHEUS");
-    // insere(cliente1);
+    cliente1 = cliente(21, "MATHEUS");
+    insere(cliente1);
 
-    // cliente1 = cliente(28, "MATHEUS");
-    // insere(cliente1);
+    cliente1 = cliente(28, "MATHEUS");
+    insere(cliente1);
 
-    // //INICIO DO SEGUNDO TESTE
-    // cliente1 = cliente(1, "MATHEUS");
-    // insere(cliente1);
+    //INICIO DO SEGUNDO TESTE
+    cliente1 = cliente(1, "MATHEUS");
+    insere(cliente1);
 
-    // //INICIO DO TERCEIRO TESTE
-    // cliente1 = cliente(8, "MATHEUS");
-    // insere(cliente1);
+    //INICIO DO TERCEIRO TESTE
+    cliente1 = cliente(8, "MATHEUS");
+    insere(cliente1);
 
-    // cliente1 = cliente(15, "MATHEUS");
-    // insere(cliente1);
+    cliente1 = cliente(15, "MATHEUS");
+    insere(cliente1);
 
-    // cliente1 = cliente(22, "MATHEUS");
-    // insere(cliente1);
+   
+    cliente1 = cliente(22, "MATHEUS");
+    insere(cliente1);
+
+    remover(7);
+
 
     // //INICIO DO QUINTO TESTE
     // cliente1 = cliente(5, "MATHEUS");
